@@ -5,18 +5,32 @@ from django.core.validators import RegexValidator
 from django.db.models import Q
 
 class Project(models.Model):
-    title = models.CharField(max_length=64, unique=True)
+    title = models.CharField(max_length=64, unique=True, blank=False)
     description = models.CharField(max_length=256, blank=True)
-    image = models.ImageField(upload_to='project_images/', blank=True, null=True) 
+    image = models.ImageField(upload_to='project_images/', blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True)
 
+    def clean(self):
+        if not self.title:
+            raise ValidationError("Title cannot be blank.")
+        if len(self.title) > 64:
+            raise ValidationError("Title cannot exceed 64 characters.")
+
     def save(self, *args, **kwargs):
-        if not self.slug:  # Generate slug only for new projects
-            self.slug = slugify(self.title)
+        self.clean()  # Call clean method to enforce validation
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while Project.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
+
 
 class Board(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='boards')
@@ -48,11 +62,11 @@ class Task(models.Model):
         ('MEDIUM', 'Medium'),
         ('LOW', 'Low'),
     ]
-    
+
     list = models.ForeignKey(List, on_delete=models.CASCADE, related_name='tasks')
     title = models.CharField(max_length=64)
-    description = models.CharField(max_length=512, blank=True)
-    priority = models.CharField(max_length=6, choices=PRIORITY_CHOICES)
+    description = models.CharField(max_length=512, blank=True)  # Consider adding a max length
+    priority = models.CharField(max_length=6, choices=PRIORITY_CHOICES, default='MEDIUM')
     story_points = models.IntegerField()
 
     def clean(self):
@@ -60,13 +74,19 @@ class Task(models.Model):
             raise ValidationError("Story points must be between 0 and 100.")
         if self.story_points % 5 != 0:
             raise ValidationError("Story points must be a multiple of 5.")
+        if not self.title:
+            raise ValidationError("Title cannot be blank.")
+        if len(self.title) > 64:
+            raise ValidationError("Title cannot exceed 64 characters.")
 
     def save(self, *args, **kwargs):
-        self.clean()  # Call clean method to enforce validation
+        self.clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
+
+
 
 class Label(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='labels')

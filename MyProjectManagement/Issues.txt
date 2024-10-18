@@ -1,0 +1,37 @@
+issues ~ models and ORM:
+
+Creating the Django Project:
+Difficulty in initiating the new project called "MyProjectManagement" and the subapp "projects_tool."
+
+Registering the Subapp:
+Required guidance on how to properly register the "projects_tool" subapp within the Django project settings after creation.
+
+Defining Models:
+Challenges in defining the required models for projects, boards, lists, tasks, and labels in projects_tool/models.py.
+
+Implementing Unique Constraints:
+Issues with ensuring that fields like project titles and board titles were unique and not blank or null, which is crucial for the database integrity.
+
+Setting Field Constraints:
+Difficulties in implementing various constraints for fields, such as maximum character limits and nullability requirements.
+
+ForeignKey Relationships:
+Challenges in defining ForeignKey relationships between models (e.g., between projects and boards, boards and lists) to maintain proper relational integrity.
+
+Deleting Associated Data:
+Needed to set up the deletion behavior for models (e.g., ensuring that deleting a project also removes its associated boards, lists, tasks, and labels).
+
+Generating and Applying Migrations:
+Required assistance in generating migrations using python3 manage.py makemigrations and applying them with python3 manage.py migrate, and understanding the process if issues arose.
+
+Handling Migration Errors:
+Encountered errors during migrations that needed to be resolved before proceeding, especially related to model definitions and constraints.
+
+Testing Models in the Django Shell:
+Wanted to test the model implementations in the Django shell, ensuring they functioned as expected, including creating instances and checking validations.
+
+Manual Data Entry in DBeaver:
+Sought guidance on how to manually add entries to the database using DBeaver and validate those entries through the Django shell.
+
+Ensuring Correct Database Setup:
+Need to verify that the database tables and columns reflected the expected structure according to your model definitions after applying migrations.
