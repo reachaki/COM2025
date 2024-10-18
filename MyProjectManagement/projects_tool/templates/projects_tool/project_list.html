@@ -1,0 +1,31 @@
+{% load static %}  <!-- Load the static tag library -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'projects_tool/static/css/styles.css' %}">  <!-- Corrected static path -->
+    <title>Project List</title>
+</head>
+<body>
+    <h1>Project List</h1>
+    <ul>
+        {% for project in projects %}
+            <li>
+                <strong>{{ project.title }}</strong>  <!-- Project title -->
+                {% if project.description %}
+                    - {{ project.description }}  <!-- Project description -->
+                {% endif %}
+                {% if project.image %}
+                    <img src="{{ project.image.url }}" alt="{{ project.title }}" style="width:100px; height:auto;">
+                {% else %}
+                    <p>No image available for {{ project.title }}</p>
+                {% endif %}
+
+            </li>
+        {% empty %}
+            <li>No projects available.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
