@@ -1,39 +1,61 @@
 from django.contrib import admin
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 from .models import Project, Board, List, Task, Label
 
-# Customizing the Project admin interface
-class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug', 'description')  # Display these fields in the list view
-    search_fields = ('title',)  # Search by title field
-    prepopulated_fields = {'slug': ('title',)}  # Auto-populate slug from title
+# Create resource classes for each model
+class ProjectResource(resources.ModelResource):
+    class Meta:
+        model = Project
 
-# Customizing the Board admin interface
-class BoardAdmin(admin.ModelAdmin):
-    list_display = ('title', 'project')  # Display these fields
-    search_fields = ('title',)  # Search by board title
+class BoardResource(resources.ModelResource):
+    class Meta:
+        model = Board
 
-# Customizing the List admin interface
-class ListAdmin(admin.ModelAdmin):
-    list_display = ('title', 'board', 'position')  # Display these fields
-    search_fields = ('title',)  # Search by list title
-    list_filter = ('board',)  # Add filter by board in the sidebar
+class ListResource(resources.ModelResource):
+    class Meta:
+        model = List
 
-# Customizing the Task admin interface
-class TaskAdmin(admin.ModelAdmin):
-    list_display = ('title', 'list', 'priority', 'story_points')  # Display these fields
-    search_fields = ('title',)  # Search by task title
-    list_filter = ('priority', 'list')  # Add filter by priority and list
-    ordering = ('-story_points',)  # Order by story points, descending
+class TaskResource(resources.ModelResource):
+    class Meta:
+        model = Task
 
-# Customizing the Label admin interface
-class LabelAdmin(admin.ModelAdmin):
-    list_display = ('title', 'project', 'color')  # Display these fields
-    search_fields = ('title',)  # Search by label title
-    list_filter = ('project',)  # Add filter by project in the sidebar
+class LabelResource(resources.ModelResource):
+    class Meta:
+        model = Label
 
-# Registering models and their admin customizations
-admin.site.register(Project, ProjectAdmin)
-admin.site.register(Board, BoardAdmin)
-admin.site.register(List, ListAdmin)
-admin.site.register(Task, TaskAdmin)
-admin.site.register(Label, LabelAdmin)
+# Customizing the admin interface with import/export functionality
+@admin.register(Project)
+class ProjectAdmin(ImportExportModelAdmin):
+    resource_class = ProjectResource
+    list_display = ('title', 'slug', 'description')
+    search_fields = ('title',)
+    prepopulated_fields = {'slug': ('title',)}
+
+@admin.register(Board)
+class BoardAdmin(ImportExportModelAdmin):
+    resource_class = BoardResource
+    list_display = ('title', 'project')
+    search_fields = ('title',)
+
+@admin.register(List)
+class ListAdmin(ImportExportModelAdmin):
+    resource_class = ListResource
+    list_display = ('title', 'board', 'position')
+    search_fields = ('title',)
+    list_filter = ('board',)
+
+@admin.register(Task)
+class TaskAdmin(ImportExportModelAdmin):
+    resource_class = TaskResource
+    list_display = ('title', 'list', 'priority', 'story_points')
+    search_fields = ('title',)
+    list_filter = ('priority', 'list')
+    ordering = ('-story_points',)
+
+@admin.register(Label)
+class LabelAdmin(ImportExportModelAdmin):
+    resource_class = LabelResource
+    list_display = ('title', 'project', 'color')
+    search_fields = ('title',)
+    list_filter = ('project',)
