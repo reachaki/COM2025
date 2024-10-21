@@ -9,11 +9,11 @@ from django.utils import timezone
 
 
 class Project(models.Model):
-    title = models.CharField(max_length=64, unique=True, blank=False)
-    description = models.CharField(max_length=256, blank=True)
-    image = models.ImageField(upload_to='project_images/', blank=True, null=True)  
-    slug = models.SlugField(unique=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)   # Temporarily allow null values
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    image = models.ImageField(upload_to='project_images/', blank=True)
+    slug = models.SlugField(unique=True)
+    created_at = models.DateTimeField(default=timezone.now)    # Temporarily allow null values
 
 
     def clean(self):
