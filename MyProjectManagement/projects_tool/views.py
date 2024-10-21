@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse  # Ensure to import HttpResponse
+from django.http import HttpResponse
 from .models import Project, Board, List, Task, Label
 from django.views.generic import ListView
 from rest_framework import viewsets
@@ -7,11 +7,10 @@ from .serializers import ProjectSerializer, BoardSerializer, ListSerializer, Tas
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-
 class ProjectListView(ListView):
     model = Project
-    template_name = 'projects_tool/project_list.html'  # Update this to your template path
-    context_object_name = 'projects'  # Name of the variable to access in the template
+    template_name = 'projects_tool/project_list.html'
+    context_object_name = 'projects'
 
 def homepage(request):
     return HttpResponse("Welcome to the Project Management Homepage!")
@@ -24,27 +23,27 @@ class BoardViewSet(viewsets.ModelViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
 
+    def get_queryset(self):
+        project_id = self.kwargs['project_id']
+        return Board.objects.filter(project_id=project_id)
+
 class ListViewSet(viewsets.ModelViewSet):
-    queryset = List.objects.all()
     serializer_class = ListSerializer
 
+    def get_queryset(self):
+        board_id = self.kwargs['board_id']
+        return List.objects.filter(board_id=board_id)
+
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
+    def get_queryset(self):
+        list_id = self.kwargs['list_id']
+        return Task.objects.filter(list_id=list_id)
+
 class LabelViewSet(viewsets.ModelViewSet):
-    queryset = Label.objects.all()
     serializer_class = LabelSerializer
 
-
-class YourAPIView(APIView):
-    def get(self, request):
-        return Response({"message": "Hello, world!"})
-
-
-class ProjectsAPIView(APIView):
-    def get(self, request):
-        # Logic to retrieve project data (e.g., from the database)
-        return Response({"projects": "List of projects"})
-
-
+    def get_queryset(self):
+        project_id = self.kwargs['project_id']
+        return Label.objects.filter(project_id=project_id)

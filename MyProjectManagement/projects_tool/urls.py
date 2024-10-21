@@ -1,21 +1,38 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from rest_framework_nested import routers
-from .views import ProjectListView, ProjectViewSet, BoardViewSet, ListViewSet, TaskViewSet, LabelViewSet
+from .views import (
+    ProjectViewSet,
+    BoardViewSet,
+    ListViewSet,
+    TaskViewSet,
+    LabelViewSet,
+    homepage,
+    ProjectListView,
+)
 
-# Create a router for the main API
+# Create a router and register the viewsets with it
 router = DefaultRouter()
-router.register(r'projects', ProjectViewSet)  # Register main projects API
-
-# Create a nested router for boards, lists, tasks, and labels
-projects_router = routers.NestedDefaultRouter(router, r'projects', lookup='project')
-projects_router.register('boards', BoardViewSet, basename='project-boards')
-projects_router.register('lists', ListViewSet, basename='project-lists')
-projects_router.register('tasks', TaskViewSet, basename='project-tasks')
-projects_router.register('labels', LabelViewSet, basename='project-labels')
+router.register(r'projects', ProjectViewSet)
+router.register(r'boards', BoardViewSet, basename='board')
 
 urlpatterns = [
-    path('', ProjectListView.as_view(), name='project_list'),  # This could render a project list view
-    path('api/', include(router.urls)),  # Include main API routes
-    path('api/projects/', include(projects_router.urls)),  # Include nested API routes specifically for projects
+    path('api/', include(router.urls)),  # Include the router for API endpoints
+    path('', homepage, name='homepage'),  # Home page route
+    path('projects/', ProjectListView.as_view(), name='project_list'),  # Project list view
+    
+    # Nested routes for boards within projects
+    path('api/projects/<int:project_id>/boards/', BoardViewSet.as_view({'get': 'list', 'post': 'create'}), name='project-boards'),
+    path('api/projects/<int:project_id>/boards/<int:pk>/', BoardViewSet.as_view({'get': 'retrieve', 'patch': 'partial_update', 'delete': 'destroy'}), name='project-board-detail'),
+
+    # Nested routes for lists within boards
+    path('api/projects/<int:project_id>/boards/<int:board_id>/lists/', ListViewSet.as_view({'get': 'list', 'post': 'create'}), name='board-lists'),
+    path('api/projects/<int:project_id>/boards/<int:board_id>/lists/<int:pk>/', ListViewSet.as_view({'get': 'retrieve', 'patch': 'partial_update', 'delete': 'destroy'}), name='board-list-detail'),
+
+    # Nested routes for tasks within lists
+    path('api/projects/<int:project_id>/boards/<int:board_id>/lists/<int:list_id>/tasks/', TaskViewSet.as_view({'get': 'list', 'post': 'create'}), name='list-tasks'),
+    path('api/projects/<int:project_id>/boards/<int:board_id>/lists/<int:list_id>/tasks/<int:pk>/', TaskViewSet.as_view({'get': 'retrieve', 'patch': 'partial_update', 'delete': 'destroy'}), name='list-task-detail'),
+
+    # Routes for labels
+    path('api/projects/<int:project_id>/labels/', LabelViewSet.as_view({'get': 'list', 'post': 'create'}), name='project-labels'),
+    path('api/projects/<int:project_id>/labels/<int:pk>/', LabelViewSet.as_view({'get': 'retrieve', 'patch': 'partial_update', 'delete': 'destroy'}), name='project-label-detail'),
 ]

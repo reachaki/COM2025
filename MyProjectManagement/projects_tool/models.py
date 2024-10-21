@@ -7,15 +7,13 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
 
-
 class Project(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to='project_images/', blank=True)
-    slug = models.SlugField(unique=True)
-    created_at = models.DateTimeField(default=timezone.now)    # Temporarily allow null values
-
-
+    image = models.ImageField(upload_to='project_images/', blank=True, null=True)
+    slug = models.SlugField(unique=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)  
+ 
     def clean(self):
         if not self.title:
             raise ValidationError("Title cannot be blank.")
@@ -24,7 +22,7 @@ class Project(models.Model):
 
     def save(self, *args, **kwargs):
         self.clean()  # Call clean method to enforce validation
-        if not self.slug:
+        if not self.slug:  # Only generate slug if not provided
             base_slug = slugify(self.title)
             slug = base_slug
             counter = 1
@@ -40,8 +38,8 @@ class Project(models.Model):
 
 class Board(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='boards')
-    title = models.CharField(max_length=64)
-
+    title = models.CharField(max_length=255)
+    
     class Meta:
         unique_together = ('project', 'title')
 

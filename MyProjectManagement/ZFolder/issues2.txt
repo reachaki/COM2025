@@ -1,0 +1,38 @@
+Lab 4 ~ routing and APIs
+Formative lab project on MyProjectManagement 2
+
+Issue: Exporting Dates in Django 
+Problem: Struggled with exporting date fields correctly when using the import-export library.
+Solution: Resolved the issue by adjusting the date formatting in the export process, ensuring dates were properly serialized.
+
+Issue: Data Import Using Django Data Wizard
+Problem: Faced challenges in importing sample data into the database effectively.
+Solution: Followed the Django Data Wizard’s getting started guide, creating a wizard.py file in the projects_tool directory. 
+Successfully imported sample data for projects, boards, lists, and tasks.
+
+Issue: Database Flush Warning
+Problem: Unsure whether to flush the database, which would irreversibly delete all data.
+Solution: Decided against flushing the database after confirming that I didn’t want to lose the existing data. 
+Recognized the importance of backing up data before performing destructive actions.
+
+Issue: API Routing and CRUD Operations
+Problem: Initially struggled with implementing RESTful routes for nested entities (projects, boards, lists, tasks, and labels).
+Solution: Utilized Django REST Framework’s ViewSets and DefaultRouter to efficiently set up routes. 
+Ensured that all CRUD operations were defined for each entity in the system.
+
+Issue: Testing API Endpoints
+Problem: Needed a method to test API endpoints and verify their functionality.
+Solution: Employed curl to test GET, POST, PATCH, and DELETE requests. 
+Checked the API responses to ensure they matched expected outputs.
+
+Issue: Model Registration in Admin Panel
+Problem: Needed to register models in the Django admin panel for management.
+Solution: Registered Project, Board, List, Task, and Label models in the admin panel, 
+making it easier to manage data directly through the UI.
+
+Issue: Accessing and Modifying Data
+
+Problem: Wanted to verify that I could access and modify records via different methods (admin panel, shell, SQLite client).
+Solution: Successfully accessed records in the Django admin panel, 
+used the shell for ORM queries, and checked the database directly using a SQLite client. 
+Confirmed that data integrity was maintained across all platforms.

@@ -3,14 +3,11 @@ from import_export.admin import ImportExportModelAdmin
 from .models import Project, Board, List, Task, Label
 from import_export.fields import Field
 from import_export.widgets import DateWidget 
+from import_export import fields, resources
 import logging
 
 
 logger = logging.getLogger(__name__)
-
-# Create resource classes for each model
-from import_export import fields, resources
-
 
 
 class ProjectResource(resources.ModelResource):
@@ -51,9 +48,6 @@ class ProjectAdmin(ImportExportModelAdmin):
     search_fields = ('title',)
     prepopulated_fields = {'slug': ('title',)}
    
-
-# The explicit registration line is removed
-# admin.site.register(Project, ProjectAdmin)
 
 @admin.register(Board)
 class BoardAdmin(ImportExportModelAdmin):
